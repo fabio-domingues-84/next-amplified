@@ -3,7 +3,6 @@ import { revalidatePath } from 'next/cache';
 import * as mutations from '@/graphql/mutations';
 import * as queries from '@/graphql/queries';
 
-import Image from "next/image"
 import { Table, TableBody, TableCaption,TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,7 @@ async function createTodo(formData: FormData) {
     query: mutations.createTodo,
     variables: {
       input: {
-        name: formData.get('name')?.toString() ?? ''
+        name: formData.get('task')?.toString() ?? ''
       }
     }
   });
@@ -48,7 +47,7 @@ export default async function Home() {
 
         <div className="flex items-center justify-between space-y-2">
           <form action={createTodo} className="flex items-center justify-between space-x-2">
-            <Input name="name" placeholder="Add a todo" />
+            <Input name="task" placeholder="Add a todo" />
             
             <Button type='submit'>Add</Button>
           </form>
@@ -73,25 +72,4 @@ export default async function Home() {
       </div>
     </>
   )
-
-  /*return (
-    <div>
-      <form action={createTodo}>
-        <input name="name" placeholder="Add a todo" />
-        <Button type='submit'>Add</Button>
-      </form>
-
-      {(!todos || todos.length === 0 || errors) && (
-        <div>
-          <p>No todos, please add one.</p>
-        </div>
-      )}
-
-      <ul>
-        {todos.map((todo) => {
-          return <li key={todo.id} style={{ listStyle: 'none' }}>{todo.name}</li>;
-        })}
-      </ul>
-    </div>
-  );*/
 }
