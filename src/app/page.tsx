@@ -1,21 +1,27 @@
-import { amplifyClient } from '@/utils/amplifyClient';
+import { cookies } from 'next/headers'
+import { getCurrentUser } from 'aws-amplify/auth/server'
+import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils'
+import { redirect } from 'next/navigation'
+
+import { amplifyApiClient } from '@/lib/amplifyServerUtils';
 import { revalidatePath } from 'next/cache';
 import * as mutations from '@/graphql/mutations';
 import * as queries from '@/graphql/queries';
 
-import { Table, TableBody, TableCaption,TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { SignOutButton } from '@/components/sign-out-button';
 
 async function fetchTodos() {
-  return await amplifyClient.graphql({
+  return await amplifyApiClient.graphql({
     query: queries.listTodos
   });
 }
 
 async function createTodo(formData: FormData) {
   'use server';
-  const { data } = await amplifyClient.graphql({
+  const { data } = await amplifyApiClient.graphql({
     query: mutations.createTodo,
     variables: {
       input: {
@@ -29,7 +35,22 @@ async function createTodo(formData: FormData) {
   revalidatePath('/');
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
+  const user = await runWithAmplifyServerContext({
+    nextServerContext: { cookies },
+    async operation(ctx) {
+      return getCurrentUser(ctx)
+    }
+  }).catch(() => null)
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  console.log('User: ', user)
+  
   const { data, errors } = await fetchTodos();
   const todos = data.listTodos.items;
   
@@ -42,6 +63,9 @@ export default async function Home() {
             <p className="text-muted-foreground">
               Here&apos;s a list of your tasks for this month!
             </p>
+          </div>
+          <div>
+            <SignOutButton />
           </div>
         </div>
 
