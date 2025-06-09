@@ -1,41 +1,38 @@
+'use server';
 import { cookies } from 'next/headers'
 import { getCurrentUser } from 'aws-amplify/auth/server'
 import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils'
 import { redirect } from 'next/navigation'
 
 import { amplifyApiClient } from '@/lib/amplifyServerUtils';
+import * as queries from '@/graphql/queries';
 import { revalidatePath } from 'next/cache';
 import * as mutations from '@/graphql/mutations';
-import * as queries from '@/graphql/queries';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { SignOutButton } from '@/components/sign-out-button';
 
-async function fetchTodos() {
+async function fetchCoachUserNotes() {
   return await amplifyApiClient.graphql({
-    query: queries.listTodos
+    query: queries.listCoachUserNotes
   });
 }
 
-async function createTodo(formData: FormData) {
-  'use server';
-  const { data } = await amplifyApiClient.graphql({
-    query: mutations.createTodo,
-    variables: {
-      input: {
-        name: formData.get('task')?.toString() ?? ''
-      }
-    }
-  });
+export async function createCoachUserNotes(formData: FormData) {
+  const coachUserId = formData.get('coachUserId')!.toString();
+  const notes = formData.get('task')!.toString();
 
-  console.log('Created Todo: ', data?.createTodo);
+  await amplifyApiClient.graphql({
+    query: mutations.createCoachUserNotes,
+    variables: {
+      input: { coachUserId, notes },
+    },
+  });
 
   revalidatePath('/');
 }
-
-export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const user = await runWithAmplifyServerContext({
@@ -49,10 +46,8 @@ export default async function Home() {
     redirect('/login')
   }
 
-  console.log('User: ', user)
-  
-  const { data, errors } = await fetchTodos();
-  const todos = data.listTodos.items;
+  const { data, errors } = await fetchCoachUserNotes();
+  const notes = data.listCoachUserNotes.items;
   
   return (
     <>
@@ -61,7 +56,7 @@ export default async function Home() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Here&apos;s a list of your Users!
             </p>
           </div>
           <div>
@@ -70,8 +65,9 @@ export default async function Home() {
         </div>
 
         <div className="flex items-center justify-between space-y-2">
-          <form action={createTodo} className="flex items-center justify-between space-x-2">
-            <Input name="task" placeholder="Add a todo" />
+          <form action={createCoachUserNotes} className="flex items-center justify-between space-x-2">
+            <Input name="coachUserId" placeholder="coachUserId" />
+            <Input name="task" placeholder="Escreva sua nota" />
             
             <Button type='submit'>Add</Button>
           </form>
@@ -80,17 +76,25 @@ export default async function Home() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Task</TableHead>
-              <TableHead className="text-right">Created At</TableHead>
+              <TableHead>#ID</TableHead>
+              <TableHead>Coach ID</TableHead>
+              <TableHead>Notes</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Updated At</TableHead>
+              <TableHead>Owner</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {todos.map((todo) => {
-              return <TableRow key={todo.id}>
-                <TableCell className="font-light">{todo.name}</TableCell>
-                <TableCell className="text-right">{todo.createdAt}</TableCell>
+            {notes.map((note) => (
+              <TableRow key={note.id}>
+                <TableCell className="font-light">{note.id}</TableCell>
+                <TableCell className="font-light">{note.coachUserId}</TableCell>
+                <TableCell className="font-light">{note.notes}</TableCell>
+                <TableCell className="font-light">{note.createdAt}</TableCell>
+                <TableCell className="font-light">{note.updatedAt}</TableCell>
+                <TableCell className="font-light">{note.owner}</TableCell>
               </TableRow>
-            })}
+            ))}
           </TableBody>
         </Table>
       </div>

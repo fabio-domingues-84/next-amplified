@@ -1,13 +1,30 @@
 {
   "api": {
-    "nextamplified": {
-      "dependsOn": [],
+    "teetimetrainer": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "teetimetrainer9cd69c10"
+        }
+      ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authteetimetrainer9cd69c10"
+              }
+            }
+          ],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDate": "2025-05-28T15:05:09.943Z",
+              "apiKeyExpirationDays": 365,
+              "description": ""
             },
             "authenticationType": "API_KEY"
           }
@@ -18,7 +35,7 @@
     }
   },
   "auth": {
-    "nextamplified2990ff1f": {
+    "teetimetrainer9cd69c10": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -33,7 +50,10 @@
         "signupAttributes": [
           "EMAIL"
         ],
-        "socialProviders": [],
+        "socialProviders": [
+          "GOOGLE",
+          "APPLE"
+        ],
         "usernameAttributes": [
           "EMAIL"
         ],
@@ -45,5 +65,355 @@
       "service": "Cognito"
     }
   },
-  "hosting": {}
+  "function": {
+    "cloneTrainingSession": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "completeGridGame": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "createCourseSession": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "createTrainingSession": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "createUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "teetimetrainer9cd69c10"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "teetimetrainer"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "decreaseUserStreak": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "removeUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "updateUserStats": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "updateUsername": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "teetimetrainer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_cloneTrainingSession_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "cloneTrainingSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_cloneTrainingSession_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "cloneTrainingSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_completeGridGame_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "completeGridGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_completeGridGame_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "completeGridGame"
+        }
+      ]
+    },
+    "AMPLIFY_function_createCourseSession_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCourseSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_createCourseSession_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createCourseSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_createTrainingSession_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createTrainingSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_createTrainingSession_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createTrainingSession"
+        }
+      ]
+    },
+    "AMPLIFY_function_createUser_adaptyApiKey": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createUser_freeTrialDays": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_createUser_userLimit": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "createUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_decreaseUserStreak_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "decreaseUserStreak"
+        }
+      ]
+    },
+    "AMPLIFY_function_decreaseUserStreak_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "decreaseUserStreak"
+        }
+      ]
+    },
+    "AMPLIFY_function_removeUser_adaptyKey": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "removeUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_removeUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "removeUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_removeUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "removeUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_sendMailerliteEvent_amplitudeApiKey": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "sendMailerliteEvent"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUserStats_amplitudeApiKey": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUserStats"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUserStats_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUserStats"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUserStats_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUserStats"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUserStats_tinybirdToken": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUserStats"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUsername_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUsername"
+        }
+      ]
+    },
+    "AMPLIFY_function_updateUsername_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "updateUsername"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "teetimetrainer": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    }
+  }
 }
