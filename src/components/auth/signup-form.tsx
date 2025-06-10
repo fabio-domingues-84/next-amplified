@@ -28,7 +28,7 @@ export function SignupForm({
     e.preventDefault()
     try {
       await signUp({ username: email, password })
-      router.push(`/2fa?email=${encodeURIComponent(email)}`)
+      router.push(`/auth/2fa?email=${encodeURIComponent(email)}`)
     } catch (error) {
       console.error('Erro ao logar:', error)
     }

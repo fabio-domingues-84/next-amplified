@@ -18,7 +18,7 @@ export const {
     }
 });
 
-export const amplifyApiClient = generateServerClientUsingCookies({
+export const amplifyApi = generateServerClientUsingCookies({
   config: config,
   cookies,
   authMode: 'userPool'

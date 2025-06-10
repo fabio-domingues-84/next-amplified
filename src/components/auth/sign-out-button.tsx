@@ -10,7 +10,7 @@ export function SignOutButton() {
   async function handleSignOut() {
     try {
       await signOut()
-      router.push('/login') // ou qualquer rota pública
+      router.push('/auth/login') // ou qualquer rota pública
     } catch (err) {
       console.error('Erro ao fazer logout:', err)
     }
