@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,14 +16,16 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { Button } from "../ui/button"
+import { IconDashboard } from "@tabler/icons-react"
 
 export function NavMain({
   items,
 }: {
   items: {
     title: string
-    url: string
-    icon?: LucideIcon
+    url?: string
+    icon?: React.ComponentType<any>
     isActive?: boolean
     items?: {
       title: string
@@ -34,7 +35,18 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarMenu>
+          <SidebarMenuItem className="flex items-center gap-2">
+            <SidebarMenuButton
+              tooltip="Coach Area"
+            >
+              <IconDashboard />
+              <a href="/dashboard">
+                <span>Coach Area</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible

@@ -30,6 +30,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+import { signOut } from 'aws-amplify/auth'
+import { useRouter } from 'next/navigation'
+
 export function NavUser({
   user,
 }: {
@@ -40,6 +43,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -102,7 +106,16 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                try {
+                  await signOut()
+                  router.push('/auth/login') // ou qualquer rota pública
+                } catch (err) {
+                  console.error('Erro ao fazer logout:', err)
+                }
+              }}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

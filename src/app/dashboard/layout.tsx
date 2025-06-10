@@ -7,7 +7,7 @@ export default function HomeLayout({
 }>) {
   return (
     <AppLayout>
-        { children }
+      { children }
     </AppLayout>
   );
 }

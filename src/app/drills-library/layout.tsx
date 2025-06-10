@@ -7,7 +7,7 @@ export default function DrillsLayout({
 }>) {
   return (
     <AppLayout>
-        { children }
+      { children }
     </AppLayout>
   );
 }

@@ -1,5 +1,3 @@
-"use server";
-
 import { cookies } from 'next/headers';
 import { getCurrentUser } from 'aws-amplify/auth/server';
 import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils';

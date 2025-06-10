@@ -22,7 +22,7 @@ export default async function DrillNotes(props: {
           <span className="text-lg font-bold">COACH NOTES</span>
           <Link href={`/drills-library/${id}?addNote=1`} className="cursor-pointer font-bold text-green-500 uppercase underline">
             Add new note
-          </Link> 
+          </Link>
         </div>
 
         <div className="space-y-6">
