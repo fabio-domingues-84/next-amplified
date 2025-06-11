@@ -11,6 +11,8 @@ import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils';
 import { revalidatePath } from 'next/cache';
 import { redirect } from "next/navigation";
 
+import { noteSchema } from '../schemas/notes';
+
 export async function fetchDrills() {
   return await amplifyApi.graphql({
     query: queries.listDrills
@@ -37,7 +39,11 @@ export async function fetchDrillNotes(drillId: string) {
   });
 }
 
-export async function createCoachDrillNotes(formData: FormData) {
+export async function createCoachDrillNotes(
+  _prevState: unknown,
+  formData: FormData
+) {
+  // Ensure the user is authenticated
   const user = await runWithAmplifyServerContext({
     nextServerContext: { cookies },
     async operation(ctx) {
@@ -48,9 +54,20 @@ export async function createCoachDrillNotes(formData: FormData) {
     return null;
   }
 
+  // Validate the form data against the note schema
+  const raw = Object.fromEntries(formData.entries())
+  const parsed = noteSchema.safeParse(raw)
+
+  if (!parsed.success) {
+    return { success: false, errors: parsed.error.flatten().fieldErrors }
+  }
+
+  // Extract the validated data
   const coachId = user.userId;
   const drillId = formData.get('drillId')!.toString();
   const notes = formData.get('note')!.toString();
+
+  console.log('Creating coach drill notes:', { coachId, drillId, notes });
 
   await amplifyApi.graphql({
     query: mutations.createCoachDrillNotesMinimal,
@@ -61,5 +78,7 @@ export async function createCoachDrillNotes(formData: FormData) {
 
   revalidatePath(`/drills-library/${drillId}`);
 
-  redirect(`/drills-library/${drillId}`);
+  //redirect(`/drills-library/${drillId}`);
+
+  return { success: true }
 }

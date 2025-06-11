@@ -1,6 +1,5 @@
+import { AddNoteButton, DeleteNoteButton, EditDrillButton } from '@/components/drills-library/action-buttons';
 import { fetchDrillNotes } from '../../actions/drills';
-
-import Link from 'next/link';
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString();
@@ -20,9 +19,11 @@ export default async function DrillNotes(props: {
     <div id="notes" className="mt-14 pr-8 w-full px-6">
       <div className="flex gap-10">
         <span className="text-lg font-bold">COACH NOTES</span>
-        <Link href={`/drills-library/${id}?addNote=1`} className="cursor-pointer font-bold text-green-500 uppercase underline">
-          Add new note
-        </Link>
+        <AddNoteButton drillId={ id } />
+
+        <DeleteNoteButton drillId={ id } />
+
+        <EditDrillButton drillId={ id } />
       </div>
 
       <div className="space-y-6">

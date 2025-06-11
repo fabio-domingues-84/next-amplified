@@ -1,6 +1,5 @@
 export default function DrillsLayout({
   drillNotes,
-  addNotes,
   children
 }: Readonly<{
   drillNotes: React.ReactNode;
@@ -11,9 +10,7 @@ export default function DrillsLayout({
     <>
       {children}
 
-      {drillNotes}
-
-      {addNotes}
+      {drillNotes}      
     </>
   );
 }
