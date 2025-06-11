@@ -3,6 +3,11 @@
 import { amplifyApi } from '@/lib/amplifyServerUtils';
 import * as queries from '@/graphql/queries';
 import * as mutations from '@/graphql/mutations-custom';
+
+import { cookies } from 'next/headers';
+import { getCurrentUser } from 'aws-amplify/auth/server';
+import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils';
+
 import { revalidatePath } from 'next/cache';
 import { redirect } from "next/navigation";
 
@@ -27,20 +32,30 @@ export async function fetchDrillNotes(drillId: string) {
     variables: {
       filter: {
         drillId: { eq: drillId },
-      }        
+      }
     },
   });
 }
 
 export async function createCoachDrillNotes(formData: FormData) {
-  const coachId = formData.get('coachUserId')!.toString();
+  const user = await runWithAmplifyServerContext({
+    nextServerContext: { cookies },
+    async operation(ctx) {
+      return getCurrentUser(ctx)
+    }
+  }).catch(() => null)
+  if (!user) {
+    return null;
+  }
+
+  const coachId = user.userId;
   const drillId = formData.get('drillId')!.toString();
   const notes = formData.get('note')!.toString();
 
   await amplifyApi.graphql({
     query: mutations.createCoachDrillNotesMinimal,
     variables: {
-      input: { coachId, drillId, notes},
+      input: { coachId, drillId, notes },
     },
   });
 

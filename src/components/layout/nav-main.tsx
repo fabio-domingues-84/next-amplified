@@ -36,17 +36,17 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="Coach Area"
-            >
-              <IconDashboard />
-              <a href="/dashboard">
-                <span>Coach Area</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarMenuItem className="flex items-center gap-2">
+          <SidebarMenuButton
+            tooltip="Coach Area"
+          >
+            <IconDashboard />
+            <a href="/dashboard">
+              <span>Coach Area</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible

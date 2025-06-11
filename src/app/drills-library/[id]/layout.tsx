@@ -9,11 +9,11 @@ export default function DrillsLayout({
 }>) {
   return (
     <>
-      { children }
+      {children}
 
-      { drillNotes }
+      {drillNotes}
 
-      { addNotes }
+      {addNotes}
     </>
   );
 }

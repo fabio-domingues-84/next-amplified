@@ -1,8 +1,3 @@
-import { cookies } from 'next/headers'
-import { getCurrentUser } from 'aws-amplify/auth/server'
-import { runWithAmplifyServerContext } from '@/lib/amplifyServerUtils'
-import { redirect } from 'next/navigation'
-
 import { fetchDrillDetails } from '../actions/drills';
 
 export default async function DrillDetails({
@@ -10,17 +5,6 @@ export default async function DrillDetails({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const user = await runWithAmplifyServerContext({
-    nextServerContext: { cookies },
-    async operation(ctx) {
-      return getCurrentUser(ctx)
-    }
-  }).catch(() => null)
-
-  if (!user) {
-    redirect('/auth/login')
-  }
-
   const { id } = await params;
   const { data } = await fetchDrillDetails(id);
   const drill = data.getDrill;

@@ -70,7 +70,7 @@ const data = {
       ],
     },
   ],
-  
+
   navSecondary: [
     {
       title: "Settings",
