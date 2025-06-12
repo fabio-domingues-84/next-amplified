@@ -17,7 +17,7 @@ export function UILayerManager() {
       return <DialogAddNote drillId={(payload as any).drillId} onClose={closeLayer} />
     }
     if (id === 'confirmDeleteNote') {
-      return <DialogConfirmDeleteNote noteId={(payload as any).noteId} onClose={closeLayer} />
+      return <DialogConfirmDeleteNote drillId={(payload as any).drillId} noteId={(payload as any).noteId} onClose={closeLayer} />
     }
   }
 

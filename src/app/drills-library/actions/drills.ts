@@ -2,7 +2,8 @@
 
 import { amplifyApi } from '@/lib/amplifyServerUtils';
 import * as queries from '@/graphql/queries';
-import * as mutations from '@/graphql/mutations-custom';
+import * as mutations from '@/graphql/mutations';
+import * as customMutations from '@/graphql/mutations-custom';
 
 import { cookies } from 'next/headers';
 import { getCurrentUser } from 'aws-amplify/auth/server';
@@ -65,7 +66,7 @@ export async function createCoachDrillNotes(formData: FormData) {
     console.log('Creating coach drill notes:', { coachId, drillId, notes })
 
     await amplifyApi.graphql({
-      query: mutations.createCoachDrillNotesMinimal,
+      query: customMutations.createCoachDrillNotesMinimal,
       variables: {
         input: { coachId, drillId, notes },
       },
@@ -76,6 +77,39 @@ export async function createCoachDrillNotes(formData: FormData) {
     return { success: true }
   } catch (err) {
     console.error('Unexpected error creating drill note:', err)
+    return { error: { root: ['Unexpected server error. Please try again.'] } }
+  }
+}
+
+export async function deleteDrillNote(drillId: string, noteId: string) {
+  const user = await runWithAmplifyServerContext({
+    nextServerContext: { cookies },
+    async operation(ctx) {
+      return getCurrentUser(ctx)
+    },
+  }).catch(() => null)
+
+  if (!user) {
+    return { error: { root: ['Not authenticated.'] } }
+  }
+
+  try {
+    console.log('Deleting coach drill notes:', { drillId, noteId })
+  
+    await amplifyApi.graphql({
+      query: mutations.deleteCoachDrillNotes,
+      variables: {
+        input: {
+          id: noteId,
+        },
+      },
+    })
+
+    revalidatePath(`/drills-library/${drillId}`);
+
+    return { success: true }
+  } catch (err) {
+    console.error('Unexpected error deleting drill note:', err)
     return { error: { root: ['Unexpected server error. Please try again.'] } }
   }
 }
