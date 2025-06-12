@@ -3,17 +3,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
-export function DialogConfirmDeleteNote({
-  resourceId,
-  resourceType,
-  onClose,
-}: {
-  resourceId: string
-  resourceType: string
-  onClose: () => void
-}) {
+export function DialogConfirmDeleteNote({ noteId, onClose }: { noteId: string, onClose: () => void }) {
   const handleDelete = async () => {
-    console.log(`Deleting ${resourceType} with ID ${resourceId}`)
+    console.log(`Deleting note with ID ${noteId}`)
     onClose()
   }
 
@@ -23,7 +15,7 @@ export function DialogConfirmDeleteNote({
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
         </DialogHeader>
-        <p>Are you sure you want to delete this {resourceType}?</p>
+        <p>Are you sure you want to delete the note {noteId}?</p>
         <div className="flex justify-end gap-4 pt-4">
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
           <Button variant="destructive" onClick={handleDelete}>Delete</Button>

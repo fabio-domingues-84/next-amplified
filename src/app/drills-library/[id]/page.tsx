@@ -1,3 +1,8 @@
+import { Card, CardContent } from "@/components/ui/card"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Separator } from "@/components/ui/separator"
+import { EditDrillButton } from '@/components/drills-library/action-buttons';
+
 import { fetchDrillDetails } from '../actions/drills';
 
 export default async function DrillDetails({
@@ -10,52 +15,55 @@ export default async function DrillDetails({
   const drill = data.getDrill;
 
   return (
-    <div className=" px-6">
-      <div
-        id="drill-info"
-        className="mt-5 flex w-full items-center justify-between pr-8"
-      >
-        <div
-          id="info"
-          className="text-beige-500 flex h-full flex-col justify-between font-bold"
-        >
-          <div>
-            <p className="text-2xl text-neutral-800 capitalize">
-              {drill?.name}
-            </p>
+    <div className="px-6 space-y-12">
+      <div className="flex items-start justify-between w-full">
+        <div className="flex justify-between items-start gap-10 pr-8">
+          {/* Info */}
+          <div className="space-y-6 text-neutral-800">
+            <div>
+              <h1 className="font-bold capitalize">{drill.name}</h1>
+            </div>
+
+            <div>
+              <h2 className="font-semibold">Skill</h2>
+              <p>{drill.skill?.name}</p>
+            </div>
+
+            <div>
+              <h2 className="font-semibold">Goal</h2>
+              <p>{drill.goal}</p>
+            </div>
+
+            {/* Description */}
+            <div>
+              <h2 className="font-semibold">Description</h2>
+              <p>{drill.description}</p>
+            </div>
           </div>
 
-          <div>
-            <p className="mt-8 text-xl text-neutral-800">SKILL</p>
-            <p className="text-2xl text-neutral-800">{drill?.skill?.name}</p>
-          </div>
-
-          <div>
-            <p className="mt-8 text-xl text-neutral-800">GOAL</p>
-            <p className="text-lg font-normal text-neutral-800">
-              {drill?.goal}
-            </p>
-          </div>
-        </div>
-
-        <div id="video" className="border-primary border-2 w-86 h-58">
-          {drill?.videoId && drill?.videoId !== "" && (
-            <iframe
-              className="aspect-video h-57 w-85"
-              src={`https://www.youtube.com/embed/${drill.videoId}`}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+          {/* Video */}
+          {drill.videoId && drill.videoId !== "" && (
+            <Card className="w-[640px] p-4">
+              <CardContent className="">
+                <AspectRatio ratio={16 / 9}>
+                  <iframe
+                    className="rounded-b-md w-full h-full"
+                    src={`https://www.youtube.com/embed/${drill.videoId}`}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </AspectRatio>
+              </CardContent>
+            </Card>
           )}
         </div>
+
+        <EditDrillButton drillId={id} />
       </div>
 
-      <div id="description" className="mt-14 text-neutral-800 pr-8">
-        <span className="text-xl font-bold">DESCRIPTION</span>
-        <p className="mt-4">{drill?.description}</p>
-      </div>
+      <Separator />
     </div>
   )
 }

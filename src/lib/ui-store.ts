@@ -8,7 +8,7 @@ export type UILayerType =
 
 type DialogPayloads = {
   addNote: { drillId: string }
-  confirmDeleteNote: { resourceId: string; resourceType: string }
+  confirmDeleteNote: { noteId: string }
 }
 
 type SheetPayloads = {

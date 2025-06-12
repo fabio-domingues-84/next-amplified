@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AmplifyConfig from "@/lib/amplifyConfig";
-import { UILayerManager } from "@/components/ui/UILayerManager";
+import { UILayerManager } from "@/components/ui/ui-layer-manager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

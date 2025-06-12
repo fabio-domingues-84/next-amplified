@@ -2,6 +2,7 @@
 
 import { useUIStore } from '@/lib/ui-store'
 import { Button } from '@/components/ui/button'
+import { Trash } from "lucide-react"
 
 export function AddNoteButton({ drillId }: { drillId: string }) {
   const openLayer = useUIStore((s) => s.openLayer)
@@ -21,20 +22,22 @@ export function AddNoteButton({ drillId }: { drillId: string }) {
   )
 }
 
-export function DeleteNoteButton({ drillId }: { drillId: string }) {
+export function DeleteNoteButton({ noteId }: { noteId: string }) {
   const openLayer = useUIStore((s) => s.openLayer)
 
   return (
     <Button
+      size="icon"
+      variant="ghost"
       onClick={() =>
         openLayer({
           type: 'dialog',
           id: 'confirmDeleteNote',
-          payload: { drillId },
+          payload: { noteId },
         })
       }
     >
-      Delete Note
+      <Trash className="h-5 w-5 text-destructive" />
     </Button>
   )
 }

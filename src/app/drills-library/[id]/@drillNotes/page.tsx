@@ -1,3 +1,5 @@
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { AddNoteButton, DeleteNoteButton, EditDrillButton } from '@/components/drills-library/action-buttons';
 import { fetchDrillNotes } from '../../actions/drills';
 
@@ -16,31 +18,27 @@ export default async function DrillNotes(props: {
   const notes = data.listCoachDrillNotes.items;
 
   return (
-    <div id="notes" className="mt-14 pr-8 w-full px-6">
-      <div className="flex gap-10">
-        <span className="text-lg font-bold">COACH NOTES</span>
-        <AddNoteButton drillId={ id } />
-
-        <DeleteNoteButton drillId={ id } />
-
-        <EditDrillButton drillId={ id } />
+    <div className="w-full px-6 pr-8 mt-4 space-y-10">
+      {/* Header */}
+      <div className="flex items-start justify-between w-full">
+        <h2 className="text-lg font-bold">Coach Notes</h2>
+        <AddNoteButton drillId={id} />
       </div>
 
+      {/* Notes List */}
       <div className="space-y-6">
         {notes.map((note) => (
-          <div key={note.id} className="mt-6">
-            <div className="flex items-center justify-between pr-8">
-              <div className="flex gap-4">
-                <p className="text-xl font-bold text-neutral-800">
-                  Note from {formatDate(note.createdAt)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex">
-              <p>{note.notes}</p>
-            </div>
-          </div>
+          <Card key={note.id}>
+            <CardHeader className="flex flex-row items-start justify-between">
+              <CardTitle className="text-xl">
+                Note from {formatDate(note.createdAt)}
+              </CardTitle>
+              <DeleteNoteButton noteId={note.id} />
+            </CardHeader>
+            <CardContent>
+              <p className="text-neutral-800">{note.notes}</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
