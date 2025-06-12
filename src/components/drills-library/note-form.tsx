@@ -1,85 +1,110 @@
 'use client'
 
-//import ModalWrapper from "@/components/ui/modal-wrapper";
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { noteSchema, NoteFormValues } from "@/app/drills-library/schemas/notes"
-import { createCoachDrillNotes } from "@/app/drills-library/actions/drills"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
+import { useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { noteSchema, noteType } from '@/app/drills-library/schemas/notes'
 
-export function NoteForm({ drillId }: { drillId: string }) {
-  const router = useRouter()
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form'
+import { toast } from 'sonner'
+import { useUIStore } from '@/lib/ui-store'
 
-  const form = useForm<NoteFormValues>({
+import { createCoachDrillNotes } from '@/app/drills-library/actions/drills'
+
+type NoteFormProps = {
+  drillId: string
+}
+
+export function NoteForm({ drillId }: NoteFormProps) {
+  const form = useForm<noteType>({
     resolver: zodResolver(noteSchema),
     defaultValues: {
       drillId,
-      note: "",
+      notes: '',
     },
   })
 
-  const onSubmit = async (values: NoteFormValues) => {
+  const [isPending, startTransition] = useTransition()
+  const closeLayer = useUIStore((s) => s.closeLayer)
+
+  const onSubmit = (data: noteType) => {
     const formData = new FormData()
-    formData.append("drillId", values.drillId)
-    formData.append("note", values.note)
+    formData.append('drillId', data.drillId)
+    formData.append('notes', data.notes)
 
-    const res = await createCoachDrillNotes(formData)
+    startTransition(async () => {
+      const result = await createCoachDrillNotes(formData)
 
-    if (!res.success) {
-      for (const key in res.errors) {
-        form.setError(key as keyof NoteFormValues, {
-          message: res.errors[key]?.[0]
+      if (result?.success) {
+        toast.success("Nota salva com sucesso!")
+
+        closeLayer()
+      } else if (result?.error) {
+        const errors = result.error as Record<string, string[]>
+
+        // Exibe toast
+        toast.error("Erro ao salvar a nota")
+
+        // Exibe erro global no form
+        form.setError("root", {
+          type: "server",
+          message: "Erro ao salvar a nota. Verifique os campos e tente novamente.",
         })
-      }
-      return
-    }
 
-    router.push(`/drills-library/${drillId}`)
+        console.error("Form validation errors:", errors)
+      }
+    })
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* <ModalWrapper> */}
-          <div className="bg-white w-[735px] h-[645px] flex flex-col p-8">
-            <input type="hidden" {...form.register("drillId")} />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <input type="hidden" {...form.register('drillId')} />
 
-            <p className="py-4">Write your notes below</p>
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Textarea placeholder="Write your note here" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="note"
-              render={({ field }) => (
-                <FormItem className="flex-grow flex flex-col justify-between gap-4">
-                  <FormLabel className="sr-only">Note</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Write your note here"
-                      className="h-full w-full resize-none border-2 border-neutral-800 p-4"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        {/* Mensagem de erro global (ex: erro na action ou falha do backend) */}
+        {form.formState.errors.root && (
+          <FormMessage>{form.formState.errors.root.message}</FormMessage>
+        )}
 
-            <div className="flex space-x-5 text-center mt-6">
-              <Button className="w-full" type="submit">Save</Button>
-              <Button
-                variant="destructive"
-                className="w-full"
-                type="button"
-                onClick={() => router.push(`/drills-library/${drillId}`)}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        {/* </ModalWrapper> */}
+        <div className="flex gap-4">
+          <Button
+            type="submit"
+            className="flex-1"
+            disabled={isPending || form.formState.isSubmitting}
+          >
+            {isPending ? 'Saving...' : 'Save'}
+          </Button>
+          <Button
+            type="button"
+            className="flex-1"
+            variant="outline"
+            disabled={isPending}
+            onClick={() => closeLayer()}
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
     </Form>
   )

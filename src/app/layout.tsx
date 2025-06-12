@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AmplifyConfig from "@/lib/amplifyConfig";
 import { UILayerManager } from "@/components/ui/ui-layer-manager";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <AmplifyConfig />
         {children}
         <UILayerManager />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

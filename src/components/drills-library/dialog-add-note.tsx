@@ -1,6 +1,7 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { NoteForm } from './note-form'
 
 export function DialogAddNote({ drillId, onClose }: { drillId: string, onClose: () => void }) {
   return (
@@ -9,7 +10,7 @@ export function DialogAddNote({ drillId, onClose }: { drillId: string, onClose: 
         <DialogHeader>
           <DialogTitle>Add Note</DialogTitle>
         </DialogHeader>
-        <p className="text-muted-foreground">Formulário para a drill <strong>{drillId}</strong></p>
+        <NoteForm drillId={drillId} />
       </DialogContent>
     </Dialog>
   )

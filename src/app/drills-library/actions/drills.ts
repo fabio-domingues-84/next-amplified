@@ -39,46 +39,43 @@ export async function fetchDrillNotes(drillId: string) {
   });
 }
 
-export async function createCoachDrillNotes(
-  _prevState: unknown,
-  formData: FormData
-) {
-  // Ensure the user is authenticated
+export async function createCoachDrillNotes(formData: FormData) {
   const user = await runWithAmplifyServerContext({
     nextServerContext: { cookies },
     async operation(ctx) {
       return getCurrentUser(ctx)
-    }
-  }).catch(() => null)
-  if (!user) {
-    return null;
-  }
-
-  // Validate the form data against the note schema
-  const raw = Object.fromEntries(formData.entries())
-  const parsed = noteSchema.safeParse(raw)
-
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors }
-  }
-
-  // Extract the validated data
-  const coachId = user.userId;
-  const drillId = formData.get('drillId')!.toString();
-  const notes = formData.get('note')!.toString();
-
-  console.log('Creating coach drill notes:', { coachId, drillId, notes });
-
-  await amplifyApi.graphql({
-    query: mutations.createCoachDrillNotesMinimal,
-    variables: {
-      input: { coachId, drillId, notes },
     },
-  });
+  }).catch(() => null)
 
-  revalidatePath(`/drills-library/${drillId}`);
+  if (!user) {
+    return { error: { root: ['Not authenticated.'] } }
+  }
 
-  //redirect(`/drills-library/${drillId}`);
+  const raw = Object.fromEntries(formData.entries())
+  const result = noteSchema.safeParse(raw)
 
-  return { success: true }
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors }
+  }
+
+  const { drillId, notes } = result.data
+  const coachId = user.userId
+
+  try {
+    console.log('Creating coach drill notes:', { coachId, drillId, notes })
+
+    await amplifyApi.graphql({
+      query: mutations.createCoachDrillNotesMinimal,
+      variables: {
+        input: { coachId, drillId, notes },
+      },
+    })
+
+    revalidatePath(`/drills-library/${drillId}`)
+
+    return { success: true }
+  } catch (err) {
+    console.error('Unexpected error creating drill note:', err)
+    return { error: { root: ['Unexpected server error. Please try again.'] } }
+  }
 }
