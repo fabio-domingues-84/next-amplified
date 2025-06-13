@@ -13,3 +13,11 @@ mutation CreateCoachDrillNotesMinimal($input: CreateCoachDrillNotesInput!) {
   }
 }
 `
+export const deleteCoachDrillNotes = /* GraphQL */ `
+  mutation DeleteCoachDrillNotes($input: DeleteCoachDrillNotesInput!) {
+    deleteCoachDrillNotes(input: $input) {
+      id
+      drillId
+    }
+  }
+`

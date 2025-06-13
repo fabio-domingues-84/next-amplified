@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AmplifyConfig from "@/lib/amplifyConfig";
-import { UILayerManager } from "@/components/ui/ui-layer-manager";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -29,8 +28,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AmplifyConfig />
+        
         {children}
-        <UILayerManager />
+        
         <Toaster richColors position="top-center" />
       </body>
     </html>

@@ -1,6 +1,6 @@
 import AppLayout from "@/components/layout/app-layout";
 
-export default function DrillsLayout({
+export default function Layout({
   children
 }: Readonly<{
   children: React.ReactNode;
