@@ -47,16 +47,30 @@ export async function createCoachDrillNotes(formData: FormData) {
   try {
     console.log('Creating coach drill notes:', { coachId, drillId, notes })
 
-    await amplifyApi.graphql({
+    const res = await amplifyApi.graphql({
       query: mutations.createCoachDrillNotesMinimal,
       variables: {
         input: { coachId, drillId, notes },
       },
     })
 
+    const note = res.data?.createCoachDrillNotes
+
+    if (!note) {
+      throw new Error('Failed to create note')
+    }
+
     revalidatePath(`/drills-library/${drillId}`)
 
-    return { success: true }
+    return {
+      success: true,
+      note: {
+        id: note.id,
+        drillId: note.drillId,
+        notes: note.notes,
+        createdAt: note.createdAt,
+      },
+    }
   } catch (err) {
     console.error('Unexpected error creating drill note:', err)
     return { error: { root: ['Unexpected server error. Please try again.'] } }
@@ -77,7 +91,7 @@ export async function deleteDrillNote(drillId: string, noteId: string) {
 
   try {
     console.log('Deleting coach drill notes:', { drillId, noteId })
-  
+
     await amplifyApi.graphql({
       query: mutations.deleteCoachDrillNotes,
       variables: {

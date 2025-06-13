@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea'
 import { useNotesViewModel } from '../view-model/view-model'
 import { useNotesUILayerStore } from '../ui/ui-store'
-import { startTransition, useTransition } from 'react'
+import { useTransition } from 'react'
 import { createCoachDrillNotes } from '../actions/drill-notes'
 import { toast } from 'sonner'
 import { nanoid } from 'nanoid'
@@ -26,6 +26,8 @@ export function AddNoteForm({ drillId }: { drillId: string }) {
 
   const [isPending, startTransition] = useTransition()
   const addNote = useNotesViewModel((s) => s.addNote)
+  const updateNote = useNotesViewModel((s) => s.updateNote)
+  const removeNote = useNotesViewModel((s) => s.removeNote)
   const closeLayer = useNotesUILayerStore((s) => s.closeLayer)
 
   const onSubmit = (data: noteType) => {
@@ -48,10 +50,15 @@ export function AddNoteForm({ drillId }: { drillId: string }) {
       const result = await createCoachDrillNotes(formData)
 
       if (result?.success) {
+        updateNote(optimisticNote.id, {
+          notes: result.note.notes,
+          createdAt: result.note.createdAt,
+          isPending: false,
+        })
         toast.success('Nota criada com sucesso!')
       } else {
+        removeNote(optimisticNote.id)
         toast.error('Erro ao criar nota')
-        // rollback?
       }
     })
   }
@@ -60,10 +67,10 @@ export function AddNoteForm({ drillId }: { drillId: string }) {
     <Dialog open onOpenChange={(open) => !open && closeLayer()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar Nota</DialogTitle>
+          <DialogTitle>Add Note</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Preencha sua nota para associar à drill selecionada.
+          Write your note to associate it with the selected drill.
         </DialogDescription>
 
         <Form {...form}>
@@ -76,7 +83,7 @@ export function AddNoteForm({ drillId }: { drillId: string }) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea placeholder="Digite sua nota..." {...field} />
+                    <Textarea placeholder="Type your note…" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,10 +92,10 @@ export function AddNoteForm({ drillId }: { drillId: string }) {
 
             <div className="flex gap-4 justify-end">
               <Button type="button" variant="ghost" onClick={closeLayer}>
-                Cancelar
+                Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? 'Salvando...' : 'Salvar'}
+                {isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </form>

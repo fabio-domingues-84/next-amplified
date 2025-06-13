@@ -9,6 +9,7 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/componen
 
 export function NotesList() {
   const notes = useNotesViewModel((s) => s.notes)
+  const markNoteAsDeleting = useNotesViewModel((s) => s.markNoteAsDeleting)
   const removeNote = useNotesViewModel((s) => s.removeNote)
   const openLayer = useNotesUILayerStore((s) => s.openLayer)
 
@@ -19,12 +20,13 @@ export function NotesList() {
       drillId,
       onConfirm: async () => {
         // UI otimista
-        removeNote(noteId)
+        markNoteAsDeleting(noteId)
 
         try {
           const res = await deleteDrillNote(drillId, noteId)
 
           if (res?.success) {
+            removeNote(noteId)
             toast.success('Nota deletada com sucesso')
           } else {
             toast.error('Erro ao deletar a nota')
@@ -49,11 +51,17 @@ export function NotesList() {
             <CardAction>
               {note.isPending && (
                 <span className="text-sm text-muted-foreground ml-2 animate-pulse">
-                  Salvando...
+                  Saving...
                 </span>
               )}
 
-              {!note.isPending && (
+              {note.isDeleting && (
+                <span className="text-sm text-muted-foreground ml-2 animate-pulse">
+                  Deleting...
+                </span>
+              )}
+
+              {!note.isPending && !note.isDeleting && (
                 <Button
                   variant="ghost"
                   size="sm"

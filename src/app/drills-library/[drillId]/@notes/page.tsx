@@ -10,13 +10,16 @@ export default async function DrillNotesPage({
 }) {
   const { drillId } = await params
   const { data } = await fetchDrillNotes(drillId)
-  const notes = data.listCoachDrillNotes.items
+  const notes = (data?.listCoachDrillNotes?.items ?? [])
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
 
   return (
     <div className="w-full px-6 pr-8 mt-4 space-y-10">
       <div className="flex items-start justify-between w-full">
         <h2 className="text-lg font-bold">Coach Notes</h2>
-        
+
         <AddNoteButton drillId={drillId} />
       </div>
 
