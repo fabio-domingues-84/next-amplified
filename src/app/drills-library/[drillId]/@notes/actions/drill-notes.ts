@@ -85,7 +85,7 @@ export async function deleteDrillNote(drillId: string, noteId: string) {
     },
   }).catch(() => null)
 
-  if (!user) {
+  if (user) {
     return { error: { root: ['Not authenticated.'] } }
   }
 
